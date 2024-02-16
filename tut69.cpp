@@ -1,4 +1,7 @@
 
+
+/*
+
 // INSERT A NODE INTO BST
 
 
@@ -48,6 +51,7 @@ void take_input(node* &root)
         cin>>data;
     }
 }
+
 vector<int> levelOrderTraversal(node* root)
 {
     vector<int> ans;
@@ -92,8 +96,14 @@ int main()
     return 0;
 }
 
+*/
 
-/*
+
+
+
+
+
+
 
 
 #include<bits/stdc++.h>
@@ -200,7 +210,23 @@ int main()
     }
     return 0;
 }
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 #include<bits/stdc++.h>
