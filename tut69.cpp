@@ -104,6 +104,8 @@ int main()
 
 
 
+/*
+// Search a node in binary search tree
 
 
 #include<bits/stdc++.h>
@@ -153,10 +155,12 @@ bool searchIntoBST(node* &root, int x)
     {
         return false;
     }
+
     if(root -> data == x)
     {
         return true;
     }
+
     if(root->data > x)
     {
         return searchIntoBST(root->left , x);
@@ -212,7 +216,7 @@ int main()
 }
 
 
-
+*/
 
 
 
@@ -229,6 +233,7 @@ int main()
 
 
 /*
+
 #include<bits/stdc++.h>
 using namespace std;
 class node
@@ -307,7 +312,9 @@ int main()
 
 
 
-/*
+
+
+
 #include <bits/stdc++.h>
 using namespace std;
 class node
@@ -324,6 +331,24 @@ public:
         this->right = NULL;
     }
 };
+node* minVal(node* root)
+{
+    node* temp = root;
+    while (temp->left != NULL)
+    {
+        temp = temp->left;
+    }
+    return temp;
+}
+node* maxVal(node* root)
+{
+    node* temp = root;
+    while (temp->right != NULL)
+    {
+        temp = temp->right;
+    }
+    return temp;
+}
 node* deleteFromBST(node* &root, int target)
 {
     // base case
@@ -335,15 +360,126 @@ node* deleteFromBST(node* &root, int target)
     if(root ->data == target)
     {
         // no leaf node
-
+        if(root ->left == NULL && root->right == NULL)
+        {
+            delete root;
+            return NULL;
+        }
 
 
         // one leaf node
 
+        // left wala hai tohh
+        if(root->left != NULL && root->right == NULL)
+        {
+            node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        // right wala hai tohh
+
+        if(root->left == NULL && root->right != NULL)
+        {
+            node* temp = root -> right;
+            delete root;
+            return temp;
+        }
 
         // two leaf node
-        
+
+        if(root->left != NULL && root->right != NULL)
+        {
+            // root->data = minVal(root->right)-> data;;
+            // root->right = deleteFromBST(root->right, root->data);
+
+
+            root -> data = maxVal(root -> left) -> data;
+            root -> left = deleteFromBST(root -> left , root -> data);
+            return root;
+        }
     }
+
+    if(target < root -> data)
+    {
+        cout<<"\nye upar wala chlega aur iska value hai "<<root -> data<<"   " <<endl;
+        root -> left = deleteFromBST(root -> left , target);
+    }
+    if(target > root -> data)
+    {
+        cout<<"\nBhai ye v chal rha hai iska value tohh dekkho "<<root -> data<< "  " <<endl;
+        root -> right = deleteFromBST(root -> right , target);
+    }
+    return root ;
+}
+void levelOrderTraversal(node* root)
+{   
+    queue<node*> q;
+    q.push(root);
+    q.push(NULL);
+
+    while (!q.empty())
+    {
+        node* temp = q.front();
+        q.pop();
+
+        if (temp == NULL)
+        {
+            // purana level complete traverse ho chuka hai
+            cout<<endl;
+            if(!q.empty())
+            {
+                // queue still have some child nodes
+                q.push(NULL);
+            }
+        }
+        else
+        {
+            cout<<temp -> data<<" ";
+            if(temp -> left)
+            {
+                q.push(temp -> left);
+            }
+
+            if(temp -> right)
+            {
+                q.push(temp -> right);
+            }
+        }
+    }
+}
+void preOrder(node* root)
+{
+    // base case
+    if(root == NULL)
+    {
+        return;
+    }
+    cout<<root->data<<" ";
+    preOrder(root->left);
+    preOrder(root->right);
+}
+void inOrder(node* root)
+{
+    // base case
+    if(root == NULL)
+    {
+        return;
+    }
+    inOrder(root->left);
+    cout<<root->data<<" ";
+    inOrder(root->right);
+}
+void postOrder(node* root)
+{
+    // base case
+    if(root == NULL)
+    {
+        return;
+    }
+    postOrder(root->left);
+    postOrder(root->right);
+    cout<<root->data<<" ";
 }
 node *insertIntoBST(node *&root, int data)
 {
@@ -381,5 +517,24 @@ int main()
     take_input(root);
     cout << "Enter value of node to be deleted" << endl;
     cin >> target;
+    cout<<endl<<"Printing levelOrderTraversal"<<endl;
+    levelOrderTraversal(root);
+    cout<<endl<<"Printing preOrder"<<endl;
+    preOrder(root);
+    cout<<endl<<"Printing inOrder"<<endl;
+    inOrder(root);
+    cout<<endl<<"Printing postOrder"<<endl;
+    postOrder(root);
+    cout<<"\n chlo ab delete karne chalte hai"<<endl;
+    // DELETING NODE FORM BST
+    deleteFromBST(root,target);
+    cout<<"\nAfter deleting node "<<endl;
+    cout<<endl<<"Printing preOrder"<<endl;
+    preOrder(root);
+    cout<<endl<<"Printing inOrder"<<endl;
+    inOrder(root);
+    cout<<endl<<"Printing postOrder"<<endl;
+    postOrder(root);
+    cout<<endl<<"Printing levelOrderTraversal"<<endl;
+    levelOrderTraversal(root);
 }
-*/
