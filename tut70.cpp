@@ -208,6 +208,11 @@
 
 
 
+
+
+
+
+
 // Lowest Common Ancestor
 
 #include<bits/stdc++.h>
@@ -233,23 +238,37 @@ node* lca(node* root , node* p , node* q)
 
     if (root->data > p->data && root->data >q -> data)
     {
-        lca(root->left, p , q);
+        cout<<"right wala chla hai"<<endl;
+        return (root->right, p , q);
     }
-    if (root->data <  p->data && root->data < q -> data)
+    else if (root->data <  p->data && root->data < q -> data)
     {
-        lca(root->right, p , q);
+        cout<<"left wala chla hai"<<endl;
+        return lca(root->left, p , q);
     }
     return root;
 }
 int main()
 {
-    node* root = new  node(2);
-    root -> left = new node(1);
-    root->right = new node(4);
-    root->right->left = new node(3);
+    node* root = new  node(3);
+    root->left = new node(5);
+    root->right = new node(1);
+    root->right->right = new node(8);
+    root->left->left = new node(6);
+    root->left->right = new node(2);
+    root->left->right->left = new node(7);
+    root->left->right->right = new node(4);
     node* p = root->left;
-    node* q = root->right->left;
+    node* q = root->left->right->right;
     node* ans = lca(root, p , q);
     cout<<ans->data<<endl;
     return 0;
 }
+
+
+
+
+
+
+
+
