@@ -1,101 +1,115 @@
-// N- Queens
+// Rat in a maze problem
+// https://www.codingninjas.com/codestudio/problems/rat-in-a-maze_1215030
+
+// Time Complexity => O(4^n*n)
+// Space Complexity => O(n*m)
 
 
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool isSafe(int row, int col, vector<vector<int>>& board, int n) {
-
-    //straight movement
-    int x = row;
-    int y = col;
-    while(y >= 0) {
-        if(board[x][y] == 1) {
-            return false;
-        }
-        y--;
+bool isSafe(int newX, int newY, vector<vector<bool>> &visited, vector<vector<int>> &arr, int n)
+{
+    if ((newX >= 0 && newX < n) && (newY >= 0 && newY < n) &&
+        (!visited[newX][newY]) && (arr[newX][newY] == 1))
+    {
+        return true;
     }
-
-    //diagonal movement in downward-left
-    x = row;
-    y = col;
-    while(x<n && y>=0) {
-        if(board[x][y] == 1) {
-            return false;
-        }
-        x++;
-        y--;
-    }
-
-    //diagonal movement in upward-left
-    x = row;
-    y = col;
-    while(x>=0 && y>=0) {
-        if(board[x][y] == 1) {
-            return false;
-        }
-        x--;
-        y--;
-    }
-    return true;
+    else
+        return false;
 }
 
-void addSolution(vector<vector<int>>& board, vector<vector<int>>& ans, int n) {
-    
-    vector<int>temp;
-    for(int i=0; i<n; i++) {
-        for(int j=0; j<n; j++) {
-            temp.push_back(board[i][j]);
-        }
-    }
-    ans.push_back(temp);
-}
-
-void solve(int col, vector<vector<int>>& board, vector<vector<int>>& ans, int n) {
-    //base case
-    if(col == n) {
-        //store answer & return
-        addSolution(board, ans, n);
+void solve(int x, int y, vector<vector<int>> &arr, int n, vector<vector<bool>> &visited, string path, vector<string> &ans)
+{
+    // Base case
+    if (x == n - 1 && y == n - 1)
+    {
+        ans.push_back(path);
         return;
     }
 
-    //solving 1st-case and rest recursion will take care
-    for(int row=0; row<n; row++) {
-        if(isSafe(row, col, board, n)) {
-            //action->if placing is safe
-            board[row][col] = 1;
+    // Mark the cell as visited
+    visited[x][y] = true;
 
-            //recursive call
-            solve(col+1, board, ans, n);
-
-            //backtracking logic
-            board[row][col] = 0;
-        }
+    // 4-Movements possible either 'D', 'L', 'R', 'U'
+    
+    // Down
+    if (isSafe(x + 1, y, visited, arr, n))
+    {
+        // Recursive call
+        solve(x + 1, y, arr, n, visited, path + 'D', ans);
     }
+
+    // Left
+    if (isSafe(x, y - 1, visited, arr, n))
+    {
+        solve(x, y - 1, arr, n, visited, path + 'L', ans);
+    }
+
+    // Right
+    if (isSafe(x, y + 1, visited, arr, n))
+    {
+        // Recursive call
+        solve(x, y + 1, arr, n, visited, path + 'R', ans);
+    }
+
+    // Up
+    if (isSafe(x - 1, y, visited, arr, n))
+    {
+        // Recursive call
+        solve(x - 1, y, arr, n, visited, path + 'U', ans);
+    }
+
+
+
+    
+    // Down, Left, Right, Up
+    // vector<pair<int,int>> moves{{1,0}, {0,-1}, {0,1}, {-1,0}};
+    // for (auto&i : moves) {
+    //     int newX = x + i.first;
+    //     int newY = y + i.second;
+
+    //     if (isSafe(newX, newY, visited, arr, n)) {
+    //         // recursive call
+    //         solve(newX, newY, arr, n, visited, path +
+    //         (i.first == 1 ? 'D' : i.first == -1 ? 'U' : i.second == -1 ? 'L' : 'R'), ans);
+    //     }
+    // }
+
+    
+
+    // Unmark the cell as visited for backtracking
+    visited[x][y] = false;
 }
 
-vector<vector<int>> solveNQueens(int n) {
+vector<string> searchMaze(vector<vector<int>> &arr, int n)
+{
+    vector<string> ans;
+    string path = "";
+    vector<vector<bool>> visited(n, vector<bool>(n, false));
 
-    //board
-    vector<vector<int>> board(n, vector<int>(n, 0));
-    vector<vector<int>>ans;
-    int col = 0;
-    solve(col, board, ans, n);
-    
+    if (arr[0][0] == 0)
+        return ans;
+
+    solve(0, 0, arr, n, visited, path, ans);
+
     return ans;
 }
+
 int main()
 {
-    vector<vector<int>>res;
-    int n =4;
-    res = solveNQueens(n);
-    for(auto it: res)
+    int n = 4;
+    vector<vector<int>> arr = {
+        {1, 0, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 0, 0},
+        {0, 1, 1, 1}
+    };
+
+    vector<string> ans = searchMaze(arr, n);
+    for (const auto &it : ans)
     {
-        for(auto itt: it)
-        {
-            cout<<itt<<" ";
-        }
-        cout<<endl;
+        cout << it << " ";
     }
     return 0;
 }
