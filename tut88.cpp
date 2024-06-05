@@ -1,59 +1,96 @@
-// Detect a cycle in Directed graph
-
+// Detect a cycle in undirected Graph
 
 #include<bits/stdc++.h>
 using namespace std;
 
-bool isCyclic(int src, unordered_map<int, bool>& visited, unordered_map<int, list<int>>& adjList,  unordered_map<int, bool>& dfsVisited)
-{
-    visited[src]= true;
-    dfsVisited[src]= true;
 
-    for(auto neighbour : adjList[src])
+void prepareAdj(vector<vector<int>>& edges, int n, int m,  unordered_map<int, list<int>>& adjList)
+{
+    for(int i=0; i<edges.size(); i++)
     {
-        if(!visited[neighbour])
+        int u = edges[i][0];
+        int v = edges[i][1];
+
+        adjList[u].push_back(v);
+        adjList[v].push_back(u);
+    }
+}
+bool isCyclicBFS(int src,unordered_map<int , bool>& visited, unordered_map<int, list<int>>& adjList )
+{
+    unordered_map<int, int>parent;
+    queue<int>q;
+
+    visited[src] = true;
+    parent[src] = -1;
+    q.push(src);
+
+    while (!q.empty())
+    {
+        int frontNode = q.front();
+        q.pop();
+
+        for(auto i: adjList[frontNode])
         {
-            bool ans = isCyclic(neighbour, visited, adjList, dfsVisited);
-            if(ans){
+            if(visited[i] == true && i != parent[frontNode])
+            {
+                return true;
+            }
+            else if(!visited[i])
+            {
+                visited[i] = true;
+                q.push(i);
+                parent[i] = frontNode;
+            }
+        }
+    }
+    return false;
+}
+bool isCyclicDFS(int src, int parent, unordered_map<int , bool>& visited, unordered_map<int, list<int>>& adjList)
+{
+    visited[src] = true;
+
+    // recursive call for its all neighbour
+    for(auto it: adjList[src])
+    {
+        if(!visited[it])
+        {
+            bool cycleDetected = isCyclicDFS(it, src , visited, adjList);
+            if(cycleDetected == true)
+            {
                 return true;
             }
         }
-        else if(dfsVisited[neighbour]) return true;
+        else if(it != parent)
+        {
+            return true;
+        }
     }
-    dfsVisited[src] = false;
     return false;
-}
-void prepareAdj(int n, vector<vector<int>>& edge, unordered_map<int, list<int>>& adjList)
-{
-    for(int i= 0; i<edge.size(); i++)
-    {
-        int u = edge[i][0];
-        int v = edge[i][1];
-
-        adjList[u].push_back(v);
-    }
 }
 int main()
 {
-    unordered_map<int, list<int>> adjList;
-    int n = 3;
-    vector<vector<int>> edges = {{0,1},{1,2},{2,3},{3,3}};
-    prepareAdj(n, edges,adjList);
-    unordered_map<int, bool> visited;
-    unordered_map<int, bool>dfsVisited;
-
-    for(int i = 0; i < n; i++)
+    int n = 3, m = 3;
+    vector<vector<int>> edges = {{1,2},{2,3},{3,1}};
+    unordered_map<int , bool>visited;
+    unordered_map<int, list<int>>adjList;
+    prepareAdj(edges, n, m , adjList);
+    for (int i = 0; i < n; i++)
     {
         if(!visited[i])
         {
-            bool ans = isCyclic(i, visited, adjList, dfsVisited);
-            if(ans)
+            // if(isCyclicBFS(i, visited, adjList))
+            // {
+            //     cout<<"Graph contains a cycle"<<endl;
+            //     return 0;
+            // }
+            if(isCyclicDFS(i,-1, visited, adjList))
             {
-                cout<<"Graph contains a loop"<<endl;
+                cout<<"Graph contains a cycle"<<endl;
                 return 0;
             }
         }
     }
-    cout<<"Graph doesn't contains a cycle\n";
+    cout<<"Graph doesn't contains a cycle"<<endl;
+ 
     return 0;
 }
