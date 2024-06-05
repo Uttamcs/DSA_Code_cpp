@@ -4,17 +4,24 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-void topo(int src, unordered_map<int, bool>& visited, unordered_map<int, list<int>>& adjList, stack<int>& st)
+bool isCyclic(int src, unordered_map<int, bool>& visited, unordered_map<int, list<int>>& adjList,  unordered_map<int, bool>& dfsVisited)
 {
     visited[src]= true;
+    dfsVisited[src]= true;
+
     for(auto neighbour : adjList[src])
     {
         if(!visited[neighbour])
         {
-            topo(neighbour, visited, adjList, st);
+            bool ans = isCyclic(neighbour, visited, adjList, dfsVisited);
+            if(ans){
+                return true;
+            }
         }
+        else if(dfsVisited[neighbour]) return true;
     }
-    st.push(src);
+    dfsVisited[src] = false;
+    return false;
 }
 void prepareAdj(int n, vector<vector<int>>& edge, unordered_map<int, list<int>>& adjList)
 {
@@ -29,28 +36,24 @@ void prepareAdj(int n, vector<vector<int>>& edge, unordered_map<int, list<int>>&
 int main()
 {
     unordered_map<int, list<int>> adjList;
-    int n = 6;
-    vector<vector<int>> edges = {{5,0},{5,2},{4,0},{4,1},{2,3},{3,1}};
+    int n = 3;
+    vector<vector<int>> edges = {{0,1},{1,2},{2,3},{3,3}};
     prepareAdj(n, edges,adjList);
-    vector<int>ans;
-    stack<int>st;
-    unordered_map<int, bool>visited;
+    unordered_map<int, bool> visited;
+    unordered_map<int, bool>dfsVisited;
+
     for(int i = 0; i < n; i++)
     {
         if(!visited[i])
         {
-            topo(i, visited, adjList, st);
+            bool ans = isCyclic(i, visited, adjList, dfsVisited);
+            if(ans)
+            {
+                cout<<"Graph contains a loop"<<endl;
+                return 0;
+            }
         }
     }
-    while(!st.empty())
-    {
-        ans.push_back(st.top());
-        st.pop();
-    }
-    for(auto it: ans)
-    {
-        cout<<it<<" ";
-    }
-    cout<<endl;
+    cout<<"Graph doesn't contains a cycle\n";
     return 0;
 }
