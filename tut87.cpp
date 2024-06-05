@@ -1,10 +1,22 @@
-// Detect a cycle in undirected Graph
+// DFS traversal of a graph
+
 
 #include<bits/stdc++.h>
 using namespace std;
+void dfs( unordered_map<int, list<int>>& adjList,  unordered_map<int, bool>& visited, vector<int>& component, int i)
+{
+    component.push_back(i);
+    visited[i]= true;
 
-
-void prepareAdj(vector<vector<int>>& edges, int n, int m,  unordered_map<int, list<int>>& adjList)
+    for(auto it:adjList[i])
+    {
+        if(!visited[it])
+        {
+            dfs(adjList, visited, component, it);
+        }
+    }
+}
+void prepareAdj( unordered_map<int, list<int>>& adjList, vector<vector<int>> &edges)
 {
     for(int i=0; i<edges.size(); i++)
     {
@@ -15,82 +27,57 @@ void prepareAdj(vector<vector<int>>& edges, int n, int m,  unordered_map<int, li
         adjList[v].push_back(u);
     }
 }
-bool isCyclicBFS(int src,unordered_map<int , bool>& visited, unordered_map<int, list<int>>& adjList )
+vector<vector<int>> dfs(int V, int E, vector<vector<int>> &edges)
 {
-    unordered_map<int, int>parent;
-    queue<int>q;
+    // Write your code here
+    unordered_map<int, list<int>>adj;
+    vector<vector<int>> ans;
+    unordered_map<int, bool>visited;
 
-    visited[src] = true;
-    parent[src] = -1;
-    q.push(src);
+    // prepare adjacency list
+    prepareAdj(adj, edges);
 
-    while (!q.empty())
-    {
-        int frontNode = q.front();
-        q.pop();
-
-        for(auto i: adjList[frontNode])
-        {
-            if(visited[i] == true && i != parent[frontNode])
-            {
-                return true;
-            }
-            else if(!visited[i])
-            {
-                visited[i] = true;
-                q.push(i);
-                parent[i] = frontNode;
-            }
-        }
-    }
-    return false;
-}
-bool isCyclicDFS(int src, int parent, unordered_map<int , bool>& visited, unordered_map<int, list<int>>& adjList)
-{
-    visited[src] = true;
-
-    // recursive call for its all neighbour
-    for(auto it: adjList[src])
-    {
-        if(!visited[it])
-        {
-            bool cycleDetected = isCyclicDFS(it, src , visited, adjList);
-            if(cycleDetected == true)
-            {
-                return true;
-            }
-        }
-        else if(it != parent)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-int main()
-{
-    int n = 3, m = 3;
-    vector<vector<int>> edges = {{1,2},{2,3},{3,1}};
-    unordered_map<int , bool>visited;
-    unordered_map<int, list<int>>adjList;
-    prepareAdj(edges, n, m , adjList);
-    for (int i = 0; i < n; i++)
+    // Traverse all the components of graph
+    for(int i = 0; i<V; i++)
     {
         if(!visited[i])
         {
-            // if(isCyclicBFS(i, visited, adjList))
-            // {
-            //     cout<<"Graph contains a cycle"<<endl;
-            //     return 0;
-            // }
-            if(isCyclicDFS(i,-1, visited, adjList))
-            {
-                cout<<"Graph contains a cycle"<<endl;
-                return 0;
-            }
+            vector<int>component;
+            dfs(adj, visited, component, i);
+            ans.push_back(component);
         }
     }
-    cout<<"Graph doesn't contains a cycle"<<endl;
- 
+    return ans;
+}
+int main()
+{
+    unordered_map<int, list<int>>adj;
+    vector<vector<int>> ans;
+    unordered_map<int, bool>visited;
+    vector<vector<int>> edges = {{0, 1}, {0, 2}, {0, 5},{3, 6}, {7, 4}, {4, 8}, {7, 8}};
+    
+    int V = 9;
+
+    // prepare adjacency list
+    prepareAdj(adj, edges);
+
+    // Traverse all the components of graph
+    for(int i = 0; i<V; i++)
+    {
+        if(!visited[i])
+        {
+            vector<int>component;
+            dfs(adj, visited, component, i);
+            ans.push_back(component);
+        }
+    }
+    for(auto it: ans)
+    {
+        for(auto num : it)
+        {
+            cout<<num<<" ";
+        }
+        cout<<endl;
+    }
     return 0;
 }
