@@ -62,12 +62,12 @@ int main()
     ds.unionBySize(6,7);
     ds.unionBySize(5,6);
     if(ds.findUPar(3) == ds.findUPar(7)){
-        cout<<"No Same\n";
+        cout<<"Same\n";
     }else cout<<"Not same\n";
 
     ds.unionBySize(3,7);
     if(ds.findUPar(3) == ds.findUPar(7)){
-        cout<<"No Same\n";
+        cout<<"Same\n";
     }else cout<<"Not same\n";
     return 0;
 }
