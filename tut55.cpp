@@ -199,7 +199,6 @@ int main()
 
 
 
-/*
 // Minimum cost to make the string valid
 
 #include <bits/stdc++.h>
